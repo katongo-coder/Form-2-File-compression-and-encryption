@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Management: Compression & Encryption - Prepared By Mr. Katongo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .scrolling-container { width: 100%; overflow: hidden; background: #4f46e5; color: white; padding: 12px 0; position: fixed; top: 0; left:0; z-index: 50; white-space: nowrap; }
+        .scrolling-text { display: inline-block; animation: scrollText 15s linear infinite; font-weight: 800; text-transform: uppercase; }
+        @keyframes rotateTitle { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .rotating-section { display: flex; justify-content: center; margin-top: 3rem; margin-bottom: 2rem; }
+        .rotating-text { display: inline-block; animation: rotateTitle 15s linear infinite; transform-origin: center; }
+        .selected { border-color: #4f46e5 !important; background-color: #f5f3ff !important; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .print-card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; border-radius: 0 !important; }
+            .scrolling-container, .rotating-section { display: none !important; }
+        }
+    </style>
+</head>
+<body class="p-4 pt-24 min-h-screen flex flex-col items-center">
+    <div class="scrolling-container no-print">
+        <div class="scrolling-text">Prepared By Mr. Katongo • Form 2 File Management: File Compression & Encryption • Knowledge Is Power • Prepared By Mr. Katongo</div>
+    </div>
+
+    <div class="max-w-3xl w-full">
+        <div id="reg-box" class="bg-white p-10 rounded-[40px] shadow-2xl border border-indigo-50 no-print">
+            <h2 class="text-2xl font-black text-indigo-900 mb-6 uppercase">Form 2: File Compression & Encryption</h2>
+             <h2 class="text-2xl font-black text-indigo-900 mb-6 uppercase">Pupil Registration</h2>
+            <p class="text-xs text-slate-400 mb-4 font-bold uppercase tracking-widest">* Name is required to start</p>
+            
+            <input type="text" id="sName" oninput="validate()" placeholder="Enter Full Name" class="w-full p-4 mb-4 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition">
+            <input type="text" id="sId" oninput="validate()" placeholder="Enter Pupil ID (Optional)" class="w-full p-4 mb-6 border rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition">
+            
+            <button onclick="start()" id="startB" disabled class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black opacity-30 shadow-lg uppercase tracking-widest transition-all">Begin Quiz</button>
+        </div>
+
+        <div id="quiz-box" class="hidden bg-white p-10 rounded-[40px] shadow-2xl border border-indigo-50 no-print">
+            <div class="flex justify-between items-center mb-8 border-b pb-4">
+                <div class="bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100"><span id="timer" class="font-black text-indigo-700">00:00</span></div>
+                <span id="prog" class="text-xs font-black text-slate-400 uppercase tracking-widest"></span>
+            </div>
+            <h2 id="qText" class="text-2xl font-bold text-slate-800 mb-10 leading-tight"></h2>
+            <div id="opts" class="space-y-4"></div>
+            <div class="flex justify-end mt-10">
+                <button id="nextB" disabled class="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-black shadow-lg disabled:opacity-20 uppercase tracking-widest">Next Question</button>
+            </div>
+        </div>
+
+        <div id="res-box" class="hidden space-y-8">
+            <div class="bg-white p-10 rounded-[40px] shadow-2xl border-b-[12px] border-indigo-600 print-card">
+                <h2 class="text-3xl font-black text-slate-800 text-center uppercase mb-1 tracking-tight">Official ICT Report</h2>
+                <p class="text-center font-black text-indigo-600 uppercase tracking-[0.2em] text-[10px] mb-8">Approved By Mr. Katongo</p>
+                <div class="grid grid-cols-2 gap-4 mb-8 bg-slate-50 p-6 rounded-3xl border border-indigo-50">
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pupil Name:</p><p id="rn" class="font-black text-slate-800 text-lg"></p></div>
+                    <div><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pupil's ID Number:</p><p id="ri" class="font-black text-slate-800 text-lg"></p></div>
+                    <div class="mt-2"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"> Number Of Attempt(s):</p><p id="ra" class="font-black text-indigo-600"></p></div>
+                    <div class="mt-2"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time Taken:</p><p id="rt" class="font-black text-slate-800"></p></div>
+                </div>
+                <div class="text-center py-4">
+                    <p class="text-7xl font-black text-indigo-600 mb-2"><span id="pct"></span>%</p>
+                    <p class="text-xl font-bold text-slate-700 uppercase">Total Marks: <span id="raw"></span></p>
+                    <p id="grade" class="mt-6 inline-block px-8 py-2 rounded-full font-black text-sm uppercase tracking-widest"></p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-10 no-print">
+                    <button onclick="window.print()" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Print Report / PDF</button>
+                    <button onclick="restart()" class="bg-slate-800 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl">Retake Quiz</button>
+                </div>
+            </div>
+            <div class="bg-white p-10 rounded-[40px] shadow-xl border border-indigo-50 print-card">
+                <h3 class="text-xl font-black text-slate-800 mb-8 border-b pb-4">Performance Review</h3>
+                <div id="revList" class="space-y-6"></div>
+                <div class="mt-12 pt-8 border-t text-center">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prepared By Mr. Katongo</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="rotating-section no-print">
+        <div class="rotating-text bg-white px-10 py-5 rounded-full shadow-lg border-2 border-indigo-50 font-black text-indigo-700 uppercase text-xs tracking-widest">Prepared By Mr. Katongo</div>
+    </footer>
+
+    <script>
+        const data = [
+            {
+                "question": "What is a computer file?",
+                "correctText": "A collection of related data or information stored on a computer.",
+                "rationale": "A computer file is the basic unit of storage for related data.",
+                "answerOptions": [
+                    {"text": "A hardware device used for storage", "isCorrect": false},
+                    {"text": "A collection of related data or information stored on a computer.", "isCorrect": true},
+                    {"text": "A type of internet connection", "isCorrect": false},
+                    {"text": "A software program that creates images", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which of these is an example of a compressed file format?",
+                "correctText": ".zip",
+                "rationale": "ZIP and RAR are common compressed file formats.",
+                "answerOptions": [
+                    {"text": ".docx", "isCorrect": false},
+                    {"text": ".mp3", "isCorrect": false},
+                    {"text": ".zip", "isCorrect": true},
+                    {"text": ".exe", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What is the primary purpose of file compression?",
+                "correctText": "To reduce the size of a file or folder.",
+                "rationale": "Compression reduces file size to save storage and make transfers easier.",
+                "answerOptions": [
+                    {"text": "To change the file extension", "isCorrect": false},
+                    {"text": "To reduce the size of a file or folder.", "isCorrect": true},
+                    {"text": "To delete old files automatically", "isCorrect": false},
+                    {"text": "To make files unreadable for everyone", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which type of compression allows the original file to be restored exactly?",
+                "correctText": "Lossless Compression",
+                "rationale": "In lossless compression, no data is lost and the original can be perfectly restored.",
+                "answerOptions": [
+                    {"text": "Lossy Compression", "isCorrect": false},
+                    {"text": "Permanent Compression", "isCorrect": false},
+                    {"text": "Lossless Compression", "isCorrect": true},
+                    {"text": "Drive Compression", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Lossy compression is most commonly used for which type of files?",
+                "correctText": "Images, audio, and video",
+                "rationale": "Lossy compression is used where some data loss is acceptable, like MP3s or JPEGs.",
+                "answerOptions": [
+                    {"text": "Word documents", "isCorrect": false},
+                    {"text": "Text files", "isCorrect": false},
+                    {"text": "Images, audio, and video", "isCorrect": true},
+                    {"text": "Spreadsheets", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which tool is free, open-source, and can encrypt files while compressing them?",
+                "correctText": "7-Zip",
+                "rationale": "7-Zip is free and supports high compression and encryption.",
+                "answerOptions": [
+                    {"text": "WinZip", "isCorrect": false},
+                    {"text": "7-Zip", "isCorrect": true},
+                    {"text": "BitLocker", "isCorrect": false},
+                    {"text": "Notepad", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What is the process of restoring compressed files to their original form called?",
+                "correctText": "Extraction",
+                "rationale": "Extraction (or unzipping) returns files to their normal size and format.",
+                "answerOptions": [
+                    {"text": "Encryption", "isCorrect": false},
+                    {"text": "Extraction", "isCorrect": true},
+                    {"text": "Deletion", "isCorrect": false},
+                    {"text": "Conversion", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which software is used primarily for managing disk images (ISO) and can also encrypt them?",
+                "correctText": "PowerISO",
+                "rationale": "PowerISO manages ISO images and allows password protection.",
+                "answerOptions": [
+                    {"text": "WinRAR", "isCorrect": false},
+                    {"text": "PowerISO", "isCorrect": true},
+                    {"text": "Excel", "isCorrect": false},
+                    {"text": "Windows Media Player", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What is file encryption?",
+                "correctText": "Converting readable data into an unreadable format.",
+                "rationale": "Encryption turns plain text into cipher text to prevent unauthorized access.",
+                "answerOptions": [
+                    {"text": "Reducing the size of a file", "isCorrect": false},
+                    {"text": "Converting readable data into an unreadable format.", "isCorrect": true},
+                    {"text": "Deleting sensitive files forever", "isCorrect": false},
+                    {"text": "Sending files via email faster", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which tool is built into Windows for encrypting entire drives and flash disks?",
+                "correctText": "BitLocker",
+                "rationale": "BitLocker is a Windows feature used to protect data on drives and laptops.",
+                "answerOptions": [
+                    {"text": "7-Zip", "isCorrect": false},
+                    {"text": "BitLocker", "isCorrect": true},
+                    {"text": "WinRAR", "isCorrect": false},
+                    {"text": "Paint", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "How does a password help in file encryption?",
+                "correctText": "It ensures only users with the correct password can access the data.",
+                "rationale": "Encryption requires a key or password to lock and unlock the data.",
+                "answerOptions": [
+                    {"text": "It makes the file smaller", "isCorrect": false},
+                    {"text": "It ensures only users with the correct password can access the data.", "isCorrect": true},
+                    {"text": "It changes the file's color", "isCorrect": false},
+                    {"text": "It allows the file to be sent via SMS", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which method is best for sharing an encrypted file's password securely?",
+                "correctText": "Using a separate method like an SMS or phone call.",
+                "rationale": "Do not send the password in the same message as the encrypted file.",
+                "answerOptions": [
+                    {"text": "Writing it in the email subject line", "isCorrect": false},
+                    {"text": "Using a separate method like an SMS or phone call.", "isCorrect": true},
+                    {"text": "Putting it in a text file inside the folder", "isCorrect": false},
+                    {"text": "Sending it in the same email as the file", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What is an advantage of using cloud storage like Google Drive for large files?",
+                "correctText": "You can share a link instead of sending large attachments.",
+                "rationale": "Cloud storage allows sharing links, which saves data and bypasses email size limits.",
+                "answerOptions": [
+                    {"text": "It deletes your files after 24 hours", "isCorrect": false},
+                    {"text": "You can share a link instead of sending large attachments.", "isCorrect": true},
+                    {"text": "It automatically compresses files to 1% size", "isCorrect": false},
+                    {"text": "It doesn't require an internet connection", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What is the unreadable format created by encryption called?",
+                "correctText": "Cipher text",
+                "rationale": "Readable data (plain text) is converted into unreadable cipher text.",
+                "answerOptions": [
+                    {"text": "Plain text", "isCorrect": false},
+                    {"text": "Cipher text", "isCorrect": true},
+                    {"text": "Compressed text", "isCorrect": false},
+                    {"text": "Locked text", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which of these steps comes FIRST when compressing a folder in Windows?",
+                "correctText": "Select the file or folder and right-click on it.",
+                "rationale": "The first step is always to locate and select the target item.",
+                "answerOptions": [
+                    {"text": "Click 'Extract Here'", "isCorrect": false},
+                    {"text": "Enter a password", "isCorrect": false},
+                    {"text": "Select the file or folder and right-click on it.", "isCorrect": true},
+                    {"text": "Restart the computer", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Why is it important to 'Eject' a flash disk before removing it?",
+                "correctText": "To safely remove it and prevent data loss.",
+                "rationale": "Safe removal ensures the file system is not corrupted.",
+                "answerOptions": [
+                    {"text": "To make it compress faster", "isCorrect": false},
+                    {"text": "To safely remove it and prevent data loss.", "isCorrect": true},
+                    {"text": "To encrypt the files automatically", "isCorrect": false},
+                    {"text": "To clear the disk's memory", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Encryption that protects every file inside a folder at once is called?",
+                "correctText": "Folder Encryption",
+                "rationale": "Folder encryption automatically protects all files contained within it.",
+                "answerOptions": [
+                    {"text": "Drive Encryption", "isCorrect": false},
+                    {"text": "Single Encryption", "isCorrect": false},
+                    {"text": "Folder Encryption", "isCorrect": true},
+                    {"text": "Zip Encryption", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which of these is NOT an advantage of file compression?",
+                "correctText": "It makes files permanently unreadable.",
+                "rationale": "Compression is about size, not making files unreadable (that is encryption).",
+                "answerOptions": [
+                    {"text": "Saves internet data", "isCorrect": false},
+                    {"text": "It makes files permanently unreadable.", "isCorrect": true},
+                    {"text": "Faster file transfer", "isCorrect": false},
+                    {"text": "Reduces storage usage", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "What does AES-256 refer to in tools like 7-Zip?",
+                "correctText": "An encryption method/standard.",
+                "rationale": "AES-256 is a secure encryption standard used for password protection.",
+                "answerOptions": [
+                    {"text": "A type of file extension", "isCorrect": false},
+                    {"text": "A brand of flash disk", "isCorrect": false},
+                    {"text": "An encryption method/standard.", "isCorrect": true},
+                    {"text": "A cloud storage provider", "isCorrect": false}
+                ]
+            },
+            {
+                "question": "Which icon in an email interface is used to attach a compressed file?",
+                "correctText": "The Paperclip icon",
+                "rationale": "The paperclip icon is the standard symbol for attaching files in email.",
+                "answerOptions": [
+                    {"text": "The Trash icon", "isCorrect": false},
+                    {"text": "The Paperclip icon", "isCorrect": true},
+                    {"text": "The Magnifying glass icon", "isCorrect": false},
+                    {"text": "The Printer icon", "isCorrect": false}
+                ]
+            }
+        ];
+
+        let cur = 0, score = 0, history = [], t = 0, tInt, attempts = 0;
+        const iN = document.getElementById('sName'), iI = document.getElementById('sId'), sB = document.getElementById('startB');
+
+        // FIXED: Only Name is required. Button will activate immediately on input.
+        function validate() { 
+            const hasName = iN.value.trim().length > 0;
+            sB.disabled = !hasName;
+            sB.style.opacity = hasName ? '1' : '0.3'; 
+        }
+
+        function start() {
+            attempts++;
+            document.getElementById('reg-box').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            startTimer();
+            show();
+        }
+
+        function startTimer() {
+            clearInterval(tInt);
+            t = 0;
+            tInt = setInterval(() => { 
+                t++; 
+                let m=Math.floor(t/60).toString().padStart(2,'0'), 
+                s=(t%60).toString().padStart(2,'0'); 
+                document.getElementById('timer').innerText = `${m}:${s}`; 
+            }, 1000);
+        }
+
+        function show() {
+            const q = data[cur];
+            document.getElementById('nextB').disabled = true;
+            document.getElementById('prog').innerText = `Question ${cur+1} of ${data.length}`;
+            document.getElementById('qText').innerText = q.question;
+            const oD = document.getElementById('opts'); oD.innerHTML = '';
+            q.answerOptions.forEach(o => {
+                const b = document.createElement('button');
+                b.className = "w-full text-left p-5 border-2 border-slate-100 rounded-3xl font-bold text-slate-700 transition hover:border-indigo-300";
+                b.innerText = o.text;
+                b.onclick = () => { 
+                    Array.from(oD.children).forEach(c => c.classList.remove('selected')); 
+                    b.classList.add('selected'); 
+                    b.dataset.c = o.isCorrect; 
+                    b.dataset.t = o.text; 
+                    document.getElementById('nextB').disabled = false; 
+                };
+                oD.appendChild(b);
+            });
+        }
+
+        document.getElementById('nextB').onclick = () => {
+            const sel = document.querySelector('.selected');
+            const isC = sel.dataset.c === "true";
+            if(isC) score++;
+            history.push({ q: data[cur].question, u: sel.dataset.t, c: data[cur].correctText, r: data[cur].rationale, isC });
+            cur++;
+            if(cur < data.length) show(); else finish();
+        };
+
+        function finish() {
+            clearInterval(tInt);
+            document.getElementById('quiz-box').classList.add('hidden');
+            document.getElementById('res-box').classList.remove('hidden');
+            const p = Math.round((score/data.length)*100);
+            document.getElementById('pct').innerText = p;
+            document.getElementById('raw').innerText = `${score} / ${data.length}`;
+            document.getElementById('rn').innerText = iN.value;
+            // Display 'N/A' if ID was left blank
+            document.getElementById('ri').innerText = iI.value.trim() || "N/A";
+            document.getElementById('ra').innerText = attempts;
+            document.getElementById('rt').innerText = document.getElementById('timer').innerText;
+            const g = document.getElementById('grade');
+            g.innerText = p >= 50 ? "RESULT: PASSED" : "RESULT: FAILED";
+            g.className = `mt-6 inline-block px-8 py-2 rounded-full font-black text-sm uppercase tracking-widest ${p>=50?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}`;
+            const list = document.getElementById('revList'); list.innerHTML = '';
+            history.forEach((h, i) => {
+                const d = document.createElement('div');
+                d.className = `p-6 rounded-[30px] border-l-[10px] mb-4 ${h.isC ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}`;
+                d.innerHTML = `
+                    <p class="font-black text-slate-800">${i+1}. ${h.q}</p>
+                    <p class="text-xs mt-3"><b>Your Choice:</b> ${h.u} ${h.isC?'✅':'❌'}</p>
+                    ${!h.isC ? `<p class="text-xs text-green-700"><b>Correct:</b> ${h.c}</p>` : ''}
+                    <div class="mt-4 p-4 bg-white/60 rounded-2xl text-[10px] text-slate-600 border border-slate-100 italic">
+                        <b class="text-indigo-600 uppercase tracking-widest block mb-1">Mr. Katongo's Rationale:</b>${h.r}
+                    </div>`;
+                list.appendChild(d);
+            });
+        }
+
+        function restart() {
+            attempts++; cur = 0; score = 0; history = []; t = 0;
+            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('res-box').classList.add('hidden');
+            document.getElementById('quiz-box').classList.remove('hidden');
+            startTimer();
+            show();
+        }
+    </script>
+</body>
+</html>
