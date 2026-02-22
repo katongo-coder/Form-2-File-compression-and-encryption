@@ -406,6 +406,29 @@
             startTimer();
             show();
         }
+
+        window.onload = function() {
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyQzxp2MAQafrQDwv8U88WaWuOFVyFDj746Qaao3e32_TRiAz1kPomnLLiw1l74X47n9A/exec';
+    
+    const data = {
+      url: window.location.href,
+      userAgent: navigator.userAgent
+    };
+
+    fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors', // Important for cross-origin requests
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(() => console.log("Visit tracked!"))
+    .catch(error => console.error('Error!', error.message));
+  };
+
+        
     </script>
 </body>
 </html>
